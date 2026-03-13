@@ -1,0 +1,227 @@
+/**
+ * CyberCop WhatsApp Scam Detector - Styles
+ * Defines visual indicators for different risk levels
+ */
+
+/* Base message styling for all risk levels */
+[data-id].cybercop-safe,
+[data-id].cybercop-warning,
+[data-id].cybercop-dangerous {
+    position: relative;
+    border-radius: 8px;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+}
+
+/* SAFE messages - Green border */
+[data-id].cybercop-safe {
+    border-left: 4px solid #28a745;
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+[data-id].cybercop-safe:hover {
+    background-color: rgba(40, 167, 69, 0.1);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+/* WARNING messages - Yellow border */
+[data-id].cybercop-warning {
+    border-left: 4px solid #ffc107;
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+[data-id].cybercop-warning:hover {
+    background-color: rgba(255, 193, 7, 0.15);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+/* DANGEROUS messages - Red border */
+[data-id].cybercop-dangerous {
+    border-left: 4px solid #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+    animation: cybercop-pulse 2s infinite;
+}
+
+[data-id].cybercop-dangerous:hover {
+    background-color: rgba(220, 53, 69, 0.2);
+    box-shadow: 0 2px 12px rgba(220, 53, 69, 0.4);
+}
+
+/* Pulse animation for dangerous messages */
+@keyframes cybercop-pulse {
+    0% {
+        border-left-color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    50% {
+        border-left-color: #ff6b6b;
+        background-color: rgba(220, 53, 69, 0.15);
+    }
+    100% {
+        border-left-color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+}
+
+/* Indicator badges */
+.cybercop-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 8px;
+    margin-bottom: 4px;
+    color: white;
+    position: relative;
+    z-index: 10;
+    animation: cybercop-fadeIn 0.3s ease;
+}
+
+/* Badge colors */
+.cybercop-badge-safe {
+    background-color: #28a745;
+    border: 1px solid #1e7e34;
+}
+
+.cybercop-badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+    border: 1px solid #d39e00;
+}
+
+.cybercop-badge-dangerous {
+    background-color: #dc3545;
+    border: 1px solid #bd2130;
+    animation: cybercop-badgePulse 1.5s infinite;
+}
+
+/* Badge animations */
+@keyframes cybercop-fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes cybercop-badgePulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 4px rgba(220, 53, 69, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+/* Message text styling for different risk levels */
+[data-id].cybercop-safe .copyable-text {
+    color: #155724;
+}
+
+[data-id].cybercop-warning .copyable-text {
+    color: #856404;
+}
+
+[data-id].cybercop-dangerous .copyable-text {
+    color: #721c24;
+    font-weight: 500;
+}
+
+/* Hover tooltip for badges */
+.cybercop-badge[title]:hover {
+    cursor: help;
+    transform: scale(1.1);
+    z-index: 100;
+}
+
+/* Ensure compatibility with WhatsApp's existing styles */
+[data-id].cybercop-safe .message-in,
+[data-id].cybercop-warning .message-in,
+[data-id].cybercop-dangerous .message-in,
+[data-id].cybercop-safe .message-out,
+[data-id].cybercop-warning .message-out,
+[data-id].cybercop-dangerous .message-out {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+    [data-id].cybercop-safe {
+        background-color: rgba(40, 167, 69, 0.08);
+    }
+    
+    [data-id].cybercop-warning {
+        background-color: rgba(255, 193, 7, 0.12);
+    }
+    
+    [data-id].cybercop-dangerous {
+        background-color: rgba(220, 53, 69, 0.12);
+    }
+    
+    [data-id].cybercop-safe .copyable-text {
+        color: #28a745;
+    }
+    
+    [data-id].cybercop-warning .copyable-text {
+        color: #ffc107;
+    }
+    
+    [data-id].cybercop-dangerous .copyable-text {
+        color: #dc3545;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .cybercop-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+        margin-right: 6px;
+    }
+    
+    [data-id].cybercop-safe,
+    [data-id].cybercop-warning,
+    [data-id].cybercop-dangerous {
+        border-left-width: 3px;
+    }
+}
+
+/* Loading state */
+.cybercop-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Error state */
+.cybercop-error {
+    border-left-color: #6c757d !important;
+    background-color: rgba(108, 117, 125, 0.1) !important;
+}
+
+/* Debug mode styles (can be enabled via console) */
+[data-cybercop-debug="true"] .cybercop-badge::after {
+    content: attr(data-cybercop-id);
+    position: absolute;
+    top: -20px;
+    left: 0;
+    background: #333;
+    color: white;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-size: 8px;
+    white-space: nowrap;
+    z-index: 1000;
+}
