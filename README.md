@@ -376,15 +376,7 @@ copies or substantial portions of the Software.
 ## 📞 Support
 
 ### Get Help
-- 📧 **Email**: support@cybercop-detector.com
-- 💬 **Issues**: [GitHub Issues](https://github.com/yourusername/cybercop-whatsapp-detector/issues)
-- 📖 **Documentation**: [Wiki](https://github.com/yourusername/cybercop-whatsapp-detector/wiki)
-- 🐦 **Twitter**: [@CyberCopDetector](https://twitter.com/CyberCopDetector)
-
-### Report Security Issues
-- 🔒 **Private**: security@cybercop-detector.com
-- 🛡️ **Responsible Disclosure**: We appreciate responsible security reporting
-
+- 📧 **Email**: natansh.mahajan.tech@gmail.com
 ---
 
 ## 🌟 Star History
@@ -401,6 +393,6 @@ copies or substantial portions of the Software.
 
 **[🔝 Back to Top](#-cybercop-whatsapp-scam-detector---enhanced)**
 
-Made with ❤️ by the CyberCop Team
+Made By Natansh 
 
 </div>
