@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberCop Scanner</title>
+    <title>CyberCop Security Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -13,27 +13,28 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            min-height: 400px;
-            width: 320px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            width: 380px;
+            min-height: 500px;
         }
         
-        .container {
+        .dashboard-container {
             padding: 20px;
-            background: white;
-            min-height: 400px;
-            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            margin: 10px;
         }
         
         .header {
             text-align: center;
             margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
         
-        .logo {
+        .logo-section {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,43 +42,59 @@
         }
         
         .shield-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #28a745, #20c997);
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
-            color: white;
-            font-size: 20px;
+            margin-right: 15px;
+            font-size: 24px;
             font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
         h1 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
-            color: #2c3e50;
+            color: #fff;
             margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         
-        .status {
-            background: #f8f9fa;
+        .subtitle {
+            font-size: 12px;
+            color: #a8d8ff;
+            margin-top: 5px;
+        }
+        
+        .protection-status {
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 15px;
             margin-bottom: 20px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .status-indicator {
             display: inline-flex;
             align-items: center;
             padding: 8px 16px;
-            background: #28a745;
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             border-radius: 20px;
             font-weight: 600;
             font-size: 14px;
+            box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
         }
         
         .status-dot {
@@ -86,44 +103,47 @@
             background: white;
             border-radius: 50%;
             margin-right: 8px;
-            animation: pulse 2s infinite;
+            animation: blink 2s infinite;
         }
         
-        @keyframes pulse {
-            0% { opacity: 1; }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
-            100% { opacity: 1; }
         }
         
-        .stats {
+        .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-bottom: 20px;
         }
         
         .stat-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
             text-align: center;
-            transition: transform 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
         }
         
         .stat-card:hover {
             transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         
         .stat-number {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         
         .stat-label {
             font-size: 11px;
             text-transform: uppercase;
-            color: #6c757d;
+            color: #a8d8ff;
             font-weight: 600;
             letter-spacing: 0.5px;
         }
@@ -131,86 +151,148 @@
         .safe { color: #28a745; }
         .warning { color: #ffc107; }
         .dangerous { color: #dc3545; }
+        .scanned { color: #17a2b8; }
         
-        .features {
+        .threat-indicator {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
             margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .feature-item {
+        .threat-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .threat-levels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .threat-level {
             display: flex;
             align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .feature-item:last-child {
-            border-bottom: none;
-        }
-        
-        .feature-icon {
-            width: 24px;
-            height: 24px;
-            background: #e9ecef;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
             font-size: 12px;
         }
         
-        .feature-text {
-            flex: 1;
-            font-size: 13px;
-            color: #495057;
-        }
-        
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            width: 48px;
-            height: 24px;
-            background: #ccc;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        
-        .toggle-switch.active {
-            background: #28a745;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background: white;
+        .threat-color {
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            transition: transform 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-right: 6px;
         }
         
-        .toggle-switch.active .toggle-slider {
-            transform: translateX(24px);
+        .ai-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .ai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .ai-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .ai-status {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .ai-input-group {
+            margin-bottom: 10px;
+        }
+        
+        .ai-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+        
+        .ai-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .ai-input:focus {
+            border-color: #00d4ff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .ai-button {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .control-button {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .control-button.active {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-color: #28a745;
         }
         
         .footer {
             text-align: center;
-            font-size: 11px;
-            color: #6c757d;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
             padding-top: 15px;
-            border-top: 1px solid #f0f0f0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .version {
@@ -218,7 +300,7 @@
         }
         
         .help-link {
-            color: #007bff;
+            color: #00d4ff;
             text-decoration: none;
             font-weight: 600;
         }
@@ -226,70 +308,99 @@
         .help-link:hover {
             text-decoration: underline;
         }
+        
+        .last-updated {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="dashboard-container">
         <div class="header">
-            <div class="logo">
+            <div class="logo-section">
                 <div class="shield-icon">🛡️</div>
-                <h1>CyberCop Scanner</h1>
+                <div>
+                    <h1>CyberCop Security</h1>
+                    <div class="subtitle">WhatsApp Protection System</div>
+                </div>
             </div>
         </div>
         
-        <div class="status">
+        <div class="protection-status">
             <div class="status-indicator">
                 <div class="status-dot"></div>
-                <span id="status-text">Active</span>
+                <span id="status-text">PROTECTION ACTIVE</span>
             </div>
         </div>
         
-        <div class="stats">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number scanned" id="scanned-count">0</div>
+                <div class="stat-label">Messages Scanned</div>
+            </div>
             <div class="stat-card">
                 <div class="stat-number safe" id="safe-count">0</div>
-                <div class="stat-label">Safe</div>
+                <div class="stat-label">Safe Messages</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number warning" id="warning-count">0</div>
-                <div class="stat-label">Warning</div>
+                <div class="stat-number warning" id="suspicious-count">0</div>
+                <div class="stat-label">Suspicious</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number dangerous" id="dangerous-count">0</div>
-                <div class="stat-label">Dangerous</div>
+                <div class="stat-number dangerous" id="scam-count">0</div>
+                <div class="stat-label">Scams Detected</div>
             </div>
         </div>
         
-        <div class="toggle-container">
-            <span>Auto Scan Messages</span>
-            <div class="toggle-switch active" id="toggle-scan">
-                <div class="toggle-slider"></div>
+        <div class="threat-indicator">
+            <div class="threat-title">Threat Detection Levels</div>
+            <div class="threat-levels">
+                <div class="threat-level">
+                    <div class="threat-color" style="background: #28a745;"></div>
+                    <span>Safe</span>
+                </div>
+                <div class="threat-level">
+                    <div class="threat-color" style="background: #ffc107;"></div>
+                    <span>Warning</span>
+                </div>
+                <div class="threat-level">
+                    <div class="threat-color" style="background: #dc3545;"></div>
+                    <span>Dangerous</span>
+                </div>
             </div>
         </div>
         
-        <div class="features">
-            <div class="feature-item">
-                <div class="feature-icon">✓</div>
-                <div class="feature-text">Real-time scam detection</div>
+        <div class="ai-section">
+            <div class="ai-header">
+                <div class="ai-title">🤖 AI Enhancement</div>
+                <div class="ai-status" id="ai-status">DISABLED</div>
             </div>
-            <div class="feature-item">
-                <div class="feature-icon">✓</div>
-                <div class="feature-text">OTP and payment scam alerts</div>
+            <div class="ai-input-group">
+                <input type="password" 
+                       id="api-key-input" 
+                       class="ai-input" 
+                       placeholder="Enter OpenAI API Key (optional)">
             </div>
-            <div class="feature-item">
-                <div class="feature-icon">✓</div>
-                <div class="feature-text">Suspicious link detection</div>
+            <button id="save-api-key" class="ai-button">Save API Key</button>
+        </div>
+        
+        <div class="controls">
+            <div class="control-button active" id="toggle-scan">
+                Scanning ON
             </div>
-            <div class="feature-item">
-                <div class="feature-icon">✓</div>
-                <div class="feature-text">Job offer scam protection</div>
+            <div class="control-button" id="reset-stats">
+                Reset Stats
             </div>
         </div>
         
         <div class="footer">
-            <div class="version">Version 1.0.0</div>
+            <div class="version">Version 2.0.0 - Enhanced</div>
             <div>
                 <a href="#" class="help-link" id="help-link">Help & Support</a>
             </div>
+            <div class="last-updated" id="last-updated">Last updated: Never</div>
         </div>
     </div>
     

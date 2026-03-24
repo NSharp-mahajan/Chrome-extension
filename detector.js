@@ -88,28 +88,66 @@ class ScamDetector {
             ]
         };
         
-        // Safe indicators (messages that are likely legitimate)
-        this.safeIndicators = [
-            /\b(hi|hello|hey|good morning|good evening|how are you)\b/gi,
-            /\b(okay|ok|sure|alright|got it)\b/gi,
-            /\b(thank you|thanks|appreciate)\b/gi,
-            /\b(bye|goodbye|see you|talk later)\b/gi
-        ];
+        // Suspicious link patterns (enhanced)
+        this.suspiciousLinks = {
+            // URL shorteners
+            shorteners: [
+                'bit.ly', 'tinyurl.com', 't.co', 'shorturl.at', 'cutt.ly', 
+                'rebrand.ly', 'tiny.cc', 'is.gd', 'buff.ly', 'adf.ly'
+            ],
+            // Suspicious domains
+            suspicious: [
+                'verify-', 'secure-', 'account-', 'update-', 'support-',
+                'whatsapp-', 'facebook-', 'instagram-', 'login-',
+                'click-', 'claim-', 'reward-', 'prize-', 'winner-'
+            ],
+            // File extensions that are suspicious in messages
+            suspiciousFiles: [
+                '.exe', '.zip', '.rar', '.scr', '.bat', '.com', '.pif'
+            ]
+        };
     }
     
     /**
-     * Analyze message text and return classification
+     * Analyze message text and return classification with detailed explanations
      * @param {string} messageText - The message text to analyze
-     * @returns {Object} Classification result with level and reasons
+     * @returns {Object} Classification result with level, reasons, and tooltip data
      */
     analyzeMessage(messageText) {
         if (!messageText || typeof messageText !== 'string') {
-            return { level: 'safe', reasons: [] };
+            return { 
+                level: 'safe', 
+                reasons: [],
+                tooltip: 'Safe message',
+                links: []
+            };
         }
         
         const text = messageText.toLowerCase().trim();
         const reasons = [];
+        const detectedLinks = [];
         let maxRiskLevel = 'safe';
+        
+        // Extract and analyze links first
+        const links = this.extractLinks(messageText);
+        links.forEach(link => {
+            const linkAnalysis = this.analyzeLink(link);
+            if (linkAnalysis.isSuspicious) {
+                detectedLinks.push(linkAnalysis);
+                reasons.push({
+                    level: linkAnalysis.riskLevel,
+                    description: linkAnalysis.reason,
+                    matched: link,
+                    type: 'link'
+                });
+                
+                if (linkAnalysis.riskLevel === 'dangerous') {
+                    maxRiskLevel = 'dangerous';
+                } else if (linkAnalysis.riskLevel === 'warning' && maxRiskLevel !== 'dangerous') {
+                    maxRiskLevel = 'warning';
+                }
+            }
+        });
         
         // Check for dangerous patterns first
         for (const pattern of this.patterns.dangerous) {
@@ -118,7 +156,8 @@ class ScamDetector {
                 reasons.push({
                     level: 'dangerous',
                     description: pattern.description,
-                    matched: text.match(pattern.pattern)?.[0] || ''
+                    matched: text.match(pattern.pattern)?.[0] || '',
+                    type: 'pattern'
                 });
             }
         }
@@ -131,32 +170,21 @@ class ScamDetector {
                     reasons.push({
                         level: 'warning',
                         description: pattern.description,
-                        matched: text.match(pattern.pattern)?.[0] || ''
+                        matched: text.match(pattern.pattern)?.[0] || '',
+                        type: 'pattern'
                     });
                 }
             }
         }
         
-        // Check for safe indicators
-        let safeScore = 0;
-        for (const safePattern of this.safeIndicators) {
-            if (safePattern.test(text)) {
-                safeScore++;
-            }
-        }
-        
-        // If message has multiple safe indicators and no scam patterns, mark as safe
-        if (safeScore >= 1 && maxRiskLevel === 'safe') {
-            reasons.push({
-                level: 'safe',
-                description: 'Normal conversation pattern',
-                matched: ''
-            });
-        }
+        // Generate tooltip text
+        const tooltip = this.generateTooltip(maxRiskLevel, reasons, detectedLinks);
         
         return {
             level: maxRiskLevel,
-            reasons: reasons
+            reasons: reasons,
+            tooltip: tooltip,
+            links: detectedLinks
         };
     }
     
@@ -193,6 +221,160 @@ class ScamDetector {
                 return '#28a745'; // Green
             default:
                 return '#28a745';
+        }
+    }
+    
+    /**
+     * Extract all URLs from message text
+     * @param {string} text - Message text
+     * @returns {Array} Array of URLs found
+     */
+    extractLinks(text) {
+        const urlRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9.-]+\.[a-zA-Z]{2,}[^\s]*)/gi;
+        return text.match(urlRegex) || [];
+    }
+    
+    /**
+     * Analyze a specific URL for suspicious characteristics
+     * @param {string} url - URL to analyze
+     * @returns {Object} Analysis result with risk level and reason
+     */
+    analyzeLink(url) {
+        const lowerUrl = url.toLowerCase();
+        
+        // Check for URL shorteners
+        for (const shortener of this.suspiciousLinks.shorteners) {
+            if (lowerUrl.includes(shortener)) {
+                return {
+                    url: url,
+                    isSuspicious: true,
+                    riskLevel: 'warning',
+                    reason: `Suspicious shortened URL detected: ${shortener}`,
+                    category: 'shortener'
+                };
+            }
+        }
+        
+        // Check for suspicious domains
+        for (const suspicious of this.suspiciousLinks.suspicious) {
+            if (lowerUrl.includes(suspicious)) {
+                return {
+                    url: url,
+                    isSuspicious: true,
+                    riskLevel: 'dangerous',
+                    reason: `Suspicious domain pattern detected: ${suspicious}`,
+                    category: 'domain'
+                };
+            }
+        }
+        
+        // Check for suspicious file extensions
+        for (const fileExt of this.suspiciousLinks.suspiciousFiles) {
+            if (lowerUrl.includes(fileExt)) {
+                return {
+                    url: url,
+                    isSuspicious: true,
+                    riskLevel: 'dangerous',
+                    reason: `Suspicious file detected: ${fileExt}`,
+                    category: 'file'
+                };
+            }
+        }
+        
+        return {
+            url: url,
+            isSuspicious: false,
+            riskLevel: 'safe',
+            reason: 'Link appears safe',
+            category: 'safe'
+        };
+    }
+    
+    /**
+     * Generate tooltip text based on analysis results
+     * @param {string} level - Risk level
+     * @param {Array} reasons - Detection reasons
+     * @param {Array} links - Detected links
+     * @returns {string} Formatted tooltip text
+     */
+    generateTooltip(level, reasons, links) {
+        if (level === 'safe') {
+            return '✅ Safe message - No threats detected';
+        }
+        
+        let tooltip = '';
+        
+        if (level === 'dangerous') {
+            tooltip = '🚨 DANGEROUS - High risk scam detected:\n';
+        } else if (level === 'warning') {
+            tooltip = '⚠️ WARNING - Suspicious content detected:\n';
+        }
+        
+        // Add unique reasons
+        const uniqueReasons = [...new Set(reasons.map(r => r.description))];
+        uniqueReasons.slice(0, 3).forEach((reason, index) => {
+            tooltip += `• ${reason}\n`;
+        });
+        
+        // Add link information
+        if (links.length > 0) {
+            tooltip += `\n🔗 Suspicious links: ${links.length}`;
+        }
+        
+        return tooltip.trim();
+    }
+    
+    /**
+     * Perform AI-based message classification (optional)
+     * @param {string} messageText - Message to classify
+     * @param {string} apiKey - OpenAI API key (optional)
+     * @returns {Promise<Object>} AI classification result
+     */
+    async performAIClassification(messageText, apiKey = null) {
+        if (!apiKey) {
+            return {
+                useAI: false,
+                reason: 'No API key provided'
+            };
+        }
+        
+        try {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [{
+                        role: 'system',
+                        content: 'Classify this WhatsApp message as either "safe", "suspicious", or "scam". Respond with only the classification word.'
+                    }, {
+                        role: 'user',
+                        content: messageText
+                    }],
+                    max_tokens: 10,
+                    temperature: 0
+                })
+            });
+            
+            const data = await response.json();
+            const classification = data.choices?.[0]?.message?.content?.toLowerCase().trim();
+            
+            return {
+                useAI: true,
+                classification: classification,
+                confidence: classification ? 0.8 : 0
+            };
+            
+        } catch (error) {
+            console.error('AI classification failed:', error);
+            return {
+                useAI: false,
+                reason: 'API request failed',
+                error: error.message
+            };
         }
     }
 }

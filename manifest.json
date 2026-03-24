@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "CyberCop WhatsApp Scam Detector",
-  "version": "1.0.0",
-  "description": "Detects scam messages in WhatsApp Web chats with real-time analysis",
+  "name": "CyberCop WhatsApp Scam Detector - Enhanced",
+  "version": "2.0.0",
+  "description": "Advanced AI-powered scam detection for WhatsApp Web with real-time protection and detailed analytics",
   "permissions": [
     "activeTab",
     "storage"
@@ -20,7 +20,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "CyberCop Scanner",
+    "default_title": "CyberCop Security Dashboard",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png"
@@ -28,6 +28,8 @@
   },
   "icons": {
     "16": "icons/icon16.png",
-    "32": "icons/icon32.png"
+    "32": "icons/icon32.png",
+    "48": "icons/icon16.png",
+    "128": "icons/icon32.png"
   }
 }

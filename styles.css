@@ -1,50 +1,72 @@
 /**
- * CyberCop WhatsApp Scam Detector - Styles
- * Defines visual indicators for different risk levels
+ * CyberCop WhatsApp Scam Detector - Enhanced Styles
+ * Defines visual indicators, tooltips, and dashboard styling
  */
 
-/* Base message styling for all risk levels */
-[data-id].cybercop-safe,
-[data-id].cybercop-warning,
-[data-id].cybercop-dangerous {
-    position: relative;
-    border-radius: 8px;
-    margin: 2px 0;
-    transition: all 0.3s ease;
+/* Base message styling for all risk levels - MORE SPECIFIC */
+div[data-id].cybercop-safe,
+div[data-id].cybercop-warning,
+div[data-id].cybercop-dangerous,
+.message-in.cybercop-safe,
+.message-in.cybercop-warning,
+.message-in.cybercop-dangerous,
+.message-out.cybercop-safe,
+.message-out.cybercop-warning,
+.message-out.cybercop-dangerous {
+    position: relative !important;
+    border-radius: 8px !important;
+    margin: 2px 0 !important;
+    transition: all 0.3s ease !important;
+    border-left: 4px solid transparent !important;
 }
 
-/* SAFE messages - Green border */
-[data-id].cybercop-safe {
-    border-left: 4px solid #28a745;
-    background-color: rgba(40, 167, 69, 0.05);
+/* SAFE messages - Green border - MORE VISIBLE */
+div[data-id].cybercop-safe,
+.message-in.cybercop-safe,
+.message-out.cybercop-safe {
+    border-left: 6px solid #28a745 !important;
+    background-color: rgba(40, 167, 69, 0.15) !important;
+    box-shadow: -2px 0 8px rgba(40, 167, 69, 0.3) !important;
 }
 
-[data-id].cybercop-safe:hover {
-    background-color: rgba(40, 167, 69, 0.1);
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+div[data-id].cybercop-safe:hover,
+.message-in.cybercop-safe:hover,
+.message-out.cybercop-safe:hover {
+    background-color: rgba(40, 167, 69, 0.2) !important;
+    box-shadow: -2px 0 12px rgba(40, 167, 69, 0.4) !important;
 }
 
-/* WARNING messages - Yellow border */
-[data-id].cybercop-warning {
-    border-left: 4px solid #ffc107;
-    background-color: rgba(255, 193, 7, 0.1);
+/* WARNING messages - Yellow border - MORE VISIBLE */
+div[data-id].cybercop-warning,
+.message-in.cybercop-warning,
+.message-out.cybercop-warning {
+    border-left: 6px solid #ff9800 !important;
+    background-color: rgba(255, 152, 0, 0.2) !important;
+    box-shadow: -2px 0 8px rgba(255, 152, 0, 0.4) !important;
 }
 
-[data-id].cybercop-warning:hover {
-    background-color: rgba(255, 193, 7, 0.15);
-    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+div[data-id].cybercop-warning:hover,
+.message-in.cybercop-warning:hover,
+.message-out.cybercop-warning:hover {
+    background-color: rgba(255, 152, 0, 0.25) !important;
+    box-shadow: -2px 0 12px rgba(255, 152, 0, 0.5) !important;
 }
 
-/* DANGEROUS messages - Red border */
-[data-id].cybercop-dangerous {
-    border-left: 4px solid #dc3545;
-    background-color: rgba(220, 53, 69, 0.1);
-    animation: cybercop-pulse 2s infinite;
+/* DANGEROUS messages - Red border - MORE VISIBLE */
+div[data-id].cybercop-dangerous,
+.message-in.cybercop-dangerous,
+.message-out.cybercop-dangerous {
+    border-left: 6px solid #d32f2f !important;
+    background-color: rgba(211, 47, 47, 0.2) !important;
+    box-shadow: -2px 0 8px rgba(211, 47, 47, 0.5) !important;
+    animation: cybercop-pulse 1.5s infinite !important;
 }
 
-[data-id].cybercop-dangerous:hover {
-    background-color: rgba(220, 53, 69, 0.2);
-    box-shadow: 0 2px 12px rgba(220, 53, 69, 0.4);
+div[data-id].cybercop-dangerous:hover,
+.message-in.cybercop-dangerous:hover,
+.message-out.cybercop-dangerous:hover {
+    background-color: rgba(211, 47, 47, 0.3) !important;
+    box-shadow: -2px 0 15px rgba(211, 47, 47, 0.6) !important;
 }
 
 /* Pulse animation for dangerous messages */
@@ -63,6 +85,15 @@
     }
 }
 
+/* Enhanced badge container */
+.cybercop-badge-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    margin-right: 8px;
+}
+
 /* Indicator badges */
 .cybercop-badge {
     display: inline-block;
@@ -72,12 +103,27 @@
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-right: 8px;
-    margin-bottom: 4px;
     color: white;
     position: relative;
     z-index: 10;
     animation: cybercop-fadeIn 0.3s ease;
+}
+
+/* AI indicator */
+.cybercop-ai-indicator {
+    display: inline-block;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 10px;
+    background: rgba(0, 212, 255, 0.2);
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    cursor: help;
+    transition: all 0.3s ease;
+}
+
+.cybercop-ai-indicator:hover {
+    background: rgba(0, 212, 255, 0.3);
+    transform: scale(1.1);
 }
 
 /* Badge colors */
@@ -125,6 +171,86 @@
     }
 }
 
+/* Enhanced tooltips */
+.cybercop-tooltip {
+    position: absolute;
+    display: none;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 300px;
+    z-index: 1000;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    animation: cybercop-tooltipSlide 0.3s ease;
+}
+
+.cybercop-tooltip::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #34495e;
+}
+
+@keyframes cybercop-tooltipSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tooltip content styling */
+.tooltip-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tooltip-reasons {
+    margin-bottom: 8px;
+}
+
+.tooltip-reason {
+    margin-bottom: 4px;
+    opacity: 0.9;
+}
+
+.tooltip-links {
+    font-size: 11px;
+    padding: 4px 8px;
+    background: rgba(255, 193, 7, 0.2);
+    border-radius: 4px;
+    margin-bottom: 6px;
+    border-left: 3px solid #ffc107;
+}
+
+.tooltip-ai {
+    font-size: 11px;
+    padding: 4px 8px;
+    background: rgba(0, 212, 255, 0.2);
+    border-radius: 4px;
+    border-left: 3px solid #00d4ff;
+    font-weight: 600;
+}
+
 /* Message text styling for different risk levels */
 [data-id].cybercop-safe .copyable-text {
     color: #155724;
@@ -132,11 +258,12 @@
 
 [data-id].cybercop-warning .copyable-text {
     color: #856404;
+    font-weight: 500;
 }
 
 [data-id].cybercop-dangerous .copyable-text {
     color: #721c24;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* Hover tooltip for badges */
@@ -182,6 +309,15 @@
     [data-id].cybercop-dangerous .copyable-text {
         color: #dc3545;
     }
+    
+    .cybercop-tooltip {
+        background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    
+    .cybercop-tooltip::before {
+        border-top-color: #2d2d2d;
+    }
 }
 
 /* Responsive adjustments */
@@ -192,10 +328,20 @@
         margin-right: 6px;
     }
     
+    .cybercop-ai-indicator {
+        font-size: 9px;
+        padding: 1px 3px;
+    }
+    
     [data-id].cybercop-safe,
     [data-id].cybercop-warning,
     [data-id].cybercop-dangerous {
         border-left-width: 3px;
+    }
+    
+    .cybercop-tooltip {
+        max-width: 250px;
+        font-size: 11px;
     }
 }
 
@@ -224,4 +370,61 @@
     font-size: 8px;
     white-space: nowrap;
     z-index: 1000;
+}
+
+/* Focus indicators for accessibility */
+[data-id].cybercop-safe:focus,
+[data-id].cybercop-warning:focus,
+[data-id].cybercop-dangerous:focus {
+    outline: 2px solid #00d4ff;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    [data-id].cybercop-safe {
+        border-left-width: 6px;
+        background-color: rgba(40, 167, 69, 0.15);
+    }
+    
+    [data-id].cybercop-warning {
+        border-left-width: 6px;
+        background-color: rgba(255, 193, 7, 0.15);
+    }
+    
+    [data-id].cybercop-dangerous {
+        border-left-width: 6px;
+        background-color: rgba(220, 53, 69, 0.15);
+    }
+}
+
+/* Animation performance optimization */
+@media (prefers-reduced-motion: reduce) {
+    [data-id].cybercop-dangerous {
+        animation: none;
+    }
+    
+    .cybercop-badge-dangerous {
+        animation: none;
+    }
+    
+    .cybercop-tooltip {
+        animation: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    [data-id].cybercop-safe,
+    [data-id].cybercop-warning,
+    [data-id].cybercop-dangerous {
+        border-left-width: 2px;
+        background-color: transparent !important;
+    }
+    
+    .cybercop-badge,
+    .cybercop-ai-indicator,
+    .cybercop-tooltip {
+        display: none !important;
+    }
 }
