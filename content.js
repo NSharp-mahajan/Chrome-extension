@@ -486,7 +486,6 @@ class WhatsAppMonitor {
             tooltip.style.left = `${rect.right + scrollLeft - tooltip.offsetWidth}px`;
         }
     }
-}
     
     /**
      * Update detection statistics
@@ -507,95 +506,64 @@ class WhatsAppMonitor {
                 break;
         }
         
-        // Save statistics every 10 messages to avoid excessive storage writes
-        if (this.statistics.messagesScanned % 10 === 0) {
-            this.saveStatistics();
-        }
-    }
-    
-    /**
-     * Get current statistics
-     * @returns {Object} Current statistics
-     */
-    getStatistics() {
-        return { ...this.statistics };
-    }
-    
-    /**
-     * Reset statistics
-     */
-    resetStatistics() {
-        this.statistics = {
-            messagesScanned: 0,
-            safeMessages: 0,
-            suspiciousMessages: 0,
-            scamsDetected: 0,
-            lastUpdated: Date.now()
-        };
+        // Save statistics to storage
         this.saveStatistics();
     }
     
     /**
-     * Stop monitoring and clean up
-     */
-    stopMonitoring() {
-        if (this.observer) {
-            this.observer.disconnect();
-            this.observer = null;
-        }
-        
-        if (this.scanInterval) {
-            clearInterval(this.scanInterval);
-            this.scanInterval = null;
-        }
-        
-        // Save final statistics
-        this.saveStatistics();
-        
-        console.log('CyberCop: Monitoring stopped');
-    }
-    
-    /**
-     * Update AI API key
-     * @param {string} apiKey - OpenAI API key
-     */
-    async updateApiKey(apiKey) {
-        this.aiApiKey = apiKey;
-        try {
-            await chrome.storage.local.set({ aiApiKey: apiKey });
-            console.log('AI API key updated');
-        } catch (error) {
-            console.error('Failed to save API key:', error);
-        }
-    }
-    
-    /**
-     * Handle messages from popup
-     * @param {Object} request - Message request
+     * Handle messages from popup script
+     * @param {Object} request - Message from popup
+     * @param {Object} sender - Message sender info
      * @param {Function} sendResponse - Response callback
      */
-    async handleMessage(request, sendResponse) {
-        switch (request.type) {
-            case 'GET_STATISTICS':
-                sendResponse({ statistics: this.getStatistics() });
-                break;
-                
-            case 'RESET_STATISTICS':
-                this.resetStatistics();
-                sendResponse({ success: true });
-                break;
-                
-            case 'UPDATE_API_KEY':
-                await this.updateApiKey(request.apiKey);
-                sendResponse({ success: true });
-                break;
-                
-            case 'GET_API_KEY':
-                sendResponse({ apiKey: this.aiApiKey });
-                break;
-                
-            default:
-                sendResponse({ error: 'Unknown request type' });
+    async handleMessage(request, sender, sendResponse) {
+        try {
+            switch (request.action) {
+                case 'getStats':
+                    sendResponse({ success: true, statistics: this.statistics });
+                    break;
+                    
+                case 'toggleScanning':
+                    this.isScanning = request.enabled;
+                    sendResponse({ success: true, scanning: this.isScanning });
+                    break;
+                    
+                case 'setApiKey':
+                    this.aiApiKey = request.apiKey;
+                    await chrome.storage.local.set({ aiApiKey: this.aiApiKey });
+                    sendResponse({ success: true, hasApiKey: !!this.aiApiKey });
+                    break;
+                    
+                case 'resetStats':
+                    this.statistics = {
+                        messagesScanned: 0,
+                        safeMessages: 0,
+                        suspiciousMessages: 0,
+                        scamsDetected: 0,
+                        lastUpdated: Date.now()
+                    };
+                    await this.saveStatistics();
+                    sendResponse({ success: true, statistics: this.statistics });
+                    break;
+                    
+                default:
+                    sendResponse({ success: false, error: 'Unknown action' });
+            }
+        } catch (error) {
+            console.error('CyberCop: Error handling message:', error);
+            sendResponse({ success: false, error: error.message });
+        }
+    }
+    
+    /**
+     * Clean up resources
+     */
+    cleanup() {
+        if (this.observer) {
+            this.observer.disconnect();
+        }
+        if (this.scanInterval) {
+            clearInterval(this.scanInterval);
         }
     }
 }
@@ -611,7 +579,7 @@ try {
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (monitor && monitor.handleMessage) {
-        monitor.handleMessage(request, sendResponse);
+        monitor.handleMessage(request, sender, sendResponse);
     }
-    return true; // Keep the message channel open for async responses
+    return true; // Keep message channel open for async response
 });
